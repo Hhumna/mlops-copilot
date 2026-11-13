@@ -15,7 +15,7 @@ parser.add_argument("--n-estimators", type=int, default=100)
 parser.add_argument("--max-depth", type=int, default=5)
 parser.add_argument("--dataset-version", default="v1")
 parser.add_argument("--tracking-uri", default="http://127.0.0.1:5000")
-parser.add_argument("--experiment", default="mlops-copilot")
+parser.add_argument("--experiment", default="mlops-copilot-v3")
 args = parser.parse_args()
 
 

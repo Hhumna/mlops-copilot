@@ -9,3 +9,8 @@ mlflow.db
 airflow/logs/
 *.log
 mlartifacts/
+.pipeline_tmp/
+airflow/config/
+airflow/logs/
+airflow/.env
+.pipeline_tmp/
