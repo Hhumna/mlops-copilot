@@ -6,9 +6,6 @@ __pycache__/
 .ruff_cache/
 mlruns/
 mlflow.db
-/data/*
-!/data/*.dvc
-!/data/.gitignore
 airflow/logs/
 *.log
 mlartifacts/
