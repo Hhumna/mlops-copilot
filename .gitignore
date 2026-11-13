@@ -11,3 +11,4 @@ mlflow.db
 !/data/.gitignore
 airflow/logs/
 *.log
+mlartifacts/
