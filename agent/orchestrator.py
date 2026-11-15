@@ -10,6 +10,7 @@ import uuid
 from dotenv import load_dotenv
 from openai import (
     APIConnectionError,
+    APIStatusError,
     APITimeoutError,
     AuthenticationError,
     OpenAI,
@@ -26,7 +27,7 @@ load_dotenv()
 log = logging.getLogger("agent.orchestrator")
 
 MAX_STEPS = 14
-MAX_TOOL_CHARS = 3500
+MAX_TOOL_CHARS = 1800
 MUTATING = {"trigger_training", "restart_deployment"}
 RETRAIN_REQUIRED = ("get_dag_runs", "find_failed_tasks", "get_model_versions", "find_unhealthy_pods")
 S, I = {"type": "string"}, {"type": "integer"}
@@ -117,6 +118,23 @@ _SPECS = [
 ]
 TOOLS = {s["schema"]["function"]["name"]: s for s in _SPECS}
 
+GROUP = {n: s["fn"].__module__.rsplit(".", 1)[-1].removesuffix("_tools") for n, s in TOOLS.items()}
+KEYWORDS = {
+    "kubernetes": ("pod", "kubernetes", "k8s", "deploy", "api", "service", "unavailable", "health", "log", "restart", "replica"),
+    "airflow": ("airflow", "dag", "pipeline", "train", "task", "quality"),
+    "mlflow": ("mlflow", "model", "run", "experiment", "metric", "f1", "accuracy", "best", "candidate", "registry"),
+    "dvc": ("dataset", "dvc", "data", "version", "provenance", "commit", "reproduce"),
+}
+
+
+def _select(message: str) -> list[str]:
+    """Send only relevant tool schemas (keeps requests under the provider's token limit)."""
+    m = message.lower()
+    if "retrain" in m:
+        return list(TOOLS)
+    groups = {g for g, words in KEYWORDS.items() if any(w in m for w in words)}
+    return [n for n in TOOLS if GROUP[n] in groups] or list(TOOLS)
+
 
 class LLMUnavailable(RuntimeError):
     pass
@@ -141,7 +159,7 @@ class Agent:
         self.model = os.environ["LLM_MODEL"]
 
     def _chat(self, messages, rid):
-        schemas = [t["schema"] for t in TOOLS.values()]
+        schemas = [TOOLS[n]["schema"] for n in _select(messages[1]["content"])]
         for _ in range(len(self.keys)):
             client = OpenAI(api_key=self.keys[self.idx], base_url=self.base_url,
                             timeout=60, max_retries=0)
@@ -156,6 +174,12 @@ class Agent:
                 self.idx = (self.idx + 1) % len(self.keys)
             except (APIConnectionError, APITimeoutError) as e:
                 raise LLMUnavailable("The LLM provider is unreachable.") from e
+            except APIStatusError as e:
+                if e.status_code == 413:
+                    raise LLMUnavailable(
+                        "The request is larger than the provider's per-minute token limit."
+                    ) from e
+                raise
         raise LLMUnavailable("All configured LLM API keys are rate-limited or rejected.")
 
     def _exec(self, rid, name, raw_args, confirm, used) -> str:
@@ -174,6 +198,9 @@ class Agent:
                 args.pop("confirmed", None)  # the model can never confirm on the user's behalf
                 if name in MUTATING:
                     args["confirmed"] = confirm
+                if name == "get_pod_logs":
+                    t = args.get("tail")
+                    args["tail"] = t if isinstance(t, int) and t <= 15 else 15
                 try:
                     out = spec["fn"](**args)
                 except TypeError as e:
@@ -181,7 +208,7 @@ class Agent:
         ms = int((time.time() - start) * 1000)
         _log(event="tool_call", request_id=rid, tool=name, status=out.get("status"), duration_ms=ms)
         used.append({"tool": name, "status": out.get("status"), "duration_ms": ms})
-        text = json.dumps(out, default=str)
+        text = json.dumps(out, default=str, separators=(",", ":"))
         return text[:MAX_TOOL_CHARS] + (" ...[truncated]" if len(text) > MAX_TOOL_CHARS else "")
 
     @staticmethod

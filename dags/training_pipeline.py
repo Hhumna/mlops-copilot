@@ -51,7 +51,7 @@ def training_pipeline():
         if not DATA.exists():
             raise AirflowFailException(f"Dataset missing: {DATA}")
         recorded = yaml.safe_load(DVC_FILE.read_text())["outs"][0]["md5"]
-        actual = hashlib.md5(DATA.read_bytes()).hexdigest()  # noqa: S324
+        actual = hashlib.md5(DATA.read_bytes()).hexdigest()
         if actual != recorded:
             raise AirflowFailException(
                 f"Dataset md5 {actual} does not match DVC record {recorded}"

@@ -108,3 +108,9 @@ def test_structured_logs_have_required_fields_and_no_secrets(make_agent, fake_to
     assert tool_events and {"request_id", "tool", "status", "duration_ms"} <= tool_events[0].keys()
     assert tool_events[0]["request_id"] == out["request_id"]
     assert "secret-test-key" not in caplog.text
+
+
+def test_tool_routing_limits_schemas_but_retraining_gets_all():
+    k8s_only = orch._select("Why is my prediction API unavailable? Check pods and logs.")
+    assert k8s_only and all(orch.GROUP[n] == "kubernetes" for n in k8s_only)
+    assert set(orch._select("Is retraining necessary?")) == set(orch.TOOLS)
