@@ -1,0 +1,62 @@
+{
+    "request_id": "8d7b27d6752a",
+    "status": "llm_unavailable",
+    "answer": "I cannot answer right now: All configured LLM API keys are rate-limited or rejected. No operational results were guessed.",
+    "tools_used": [
+        {
+            "tool": "recommend_candidate",
+            "status": "error",
+            "duration_ms": 3
+        },
+        {
+            "tool": "get_model_versions",
+            "status": "error",
+            "duration_ms": 16
+        },
+        {
+            "tool": "list_experiments",
+            "status": "error",
+            "duration_ms": 4
+        },
+        {
+            "tool": "list_dags",
+            "status": "ok",
+            "duration_ms": 32
+        },
+        {
+            "tool": "list_datasets",
+            "status": "ok",
+            "duration_ms": 264
+        },
+        {
+            "tool": "list_runs",
+            "status": "error",
+            "duration_ms": 4
+        },
+        {
+            "tool": "get_dag_runs",
+            "status": "ok",
+            "duration_ms": 33
+        },
+        {
+            "tool": "list_deployments",
+            "status": "ok",
+            "duration_ms": 22
+        },
+        {
+            "tool": "detect_changes",
+            "status": "ok",
+            "duration_ms": 867
+        },
+        {
+            "tool": "find_failed_tasks",
+            "status": "ok",
+            "duration_ms": 55
+        },
+        {
+            "tool": "find_unhealthy_pods",
+            "status": "ok",
+            "duration_ms": 18
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "request_id": "0eb6017eecc7",
+    "status": "ok",
+    "answer": "**Known facts**  \n- The inference deployment **inference** is currently running image `mlops\u2011inference:1.0.0` (tag\u202f1.0.0).\n\n**Uncertainties**  \n- No health issues or failures have been reported for the deployment; we have no indication that a restart is required.\n\n**Recommended actions**  \n- If you still want to perform a rolling restart of the inference deployment, please confirm so I can execute the `restart_deployment` operation.",
+    "tools_used": [
+        {
+            "tool": "get_deployed_version",
+            "status": "ok",
+            "duration_ms": 10
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "request_id": "f8e7f32d01d0",
+    "status": "ok",
+    "answer": "**Known facts**  \n- The `inference` deployment in the `mlops-app` namespace has 2 desired replicas, but currently 0 are ready or available. It is running the image `mlops-inference:1.0.0`.\n\n**Uncertainties**  \n- The cause of the pods not being ready is not known (e.g., crash loops, image issues, resource constraints). No logs or pod\u2011level details have been retrieved yet.\n\n**Recommended actions**  \n- I need your explicit confirmation before performing a rolling restart of the `inference` deployment. Please confirm if you would like me to proceed with `restart_deployment`.",
+    "tools_used": [
+        {
+            "tool": "list_deployments",
+            "status": "ok",
+            "duration_ms": 13
+        }
+    ]
+}
