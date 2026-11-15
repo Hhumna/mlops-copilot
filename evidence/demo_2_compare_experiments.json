@@ -1,0 +1,12 @@
+{
+  "request_id": "a40b618e6b16",
+  "status": "ok",
+  "answer": "**Known facts**  \n- Both experiments **mlops\u2011copilot** and **mlops\u2011copilot\u2011v3** have **0 finished runs**.  \n- Consequently, there is **no F1 metric** (or any other metric) recorded for either experiment.  \n\n**Uncertainties**  \n- With no completed runs, we cannot determine which experiment performs better on F1 or any other metric.  \n- The lack of runs may be due to pending training jobs, failures, or simply that no experiments have been executed yet.  \n\n**Recommended actions**  \n1. Verify that training pipelines for these experiments have been triggered and have completed successfully (e.g., check Airflow DAG runs).  \n2. If no runs exist, consider launching new training runs for the desired experiment(s) and ensure they finish before comparing metrics.  \n3. Once runs are available, re\u2011run a comparison (or use `recommend_candidate`) to obtain a meaningful F1\u2011based assessment.  ",
+  "tools_used": [
+    {
+      "tool": "compare_experiments",
+      "status": "ok",
+      "duration_ms": 52
+    }
+  ]
+}
