@@ -29,7 +29,7 @@ log = logging.getLogger("agent.orchestrator")
 MAX_STEPS = 14
 MAX_TOOL_CHARS = 1800
 MUTATING = {"trigger_training", "restart_deployment"}
-RETRAIN_REQUIRED = ("get_dag_runs", "find_failed_tasks", "get_model_versions", "find_unhealthy_pods")
+RETRAIN_REQUIRED = ("get_dag_runs", "find_failed_tasks", "get_model_versions", "find_unhealthy_pods", "get_experiment_dataset")
 S, I = {"type": "string"}, {"type": "integer"}
 
 SYSTEM = """You are an MLOps assistant. You can call tools for DVC (dataset versions), \
@@ -92,6 +92,8 @@ _SPECS = [
           ["experiment_name"]),
     _spec(ml.compare_runs, "Compare two or more runs.",
           {"run_ids": {"type": "array", "items": S}}, ["run_ids"]),
+    _spec(ml.compare_experiments, "Compare experiments by their best finished run on a metric.",
+          {"experiment_names": {"type": "array", "items": S}, "metric": S}, ["experiment_names"]),
     _spec(ml.get_model_versions, "Model registry info.", {"model_name": S}),
     _spec(ml.recommend_candidate, "Compare the last N finished runs and pick a candidate with caveats.",
           {"experiment_name": S, "metric": S, "last_n": I}, ["experiment_name"]),

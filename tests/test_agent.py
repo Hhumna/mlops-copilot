@@ -70,7 +70,7 @@ def test_model_cannot_confirm_mutations_itself(make_agent, fake_tool):
 
 
 def test_retraining_question_forces_airflow_and_registry_checks(make_agent, fake_tool):
-    names = ["get_dag_runs", "find_failed_tasks", "get_model_versions", "find_unhealthy_pods"]
+    names = ["get_dag_runs", "find_failed_tasks", "get_model_versions", "find_unhealthy_pods", "get_experiment_dataset"]
     for n in names:
         fake_tool(n, lambda **kw: {"status": "ok", "data": {}})
     agent = make_agent([

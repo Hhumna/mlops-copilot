@@ -56,3 +56,7 @@ def test_dvc_rejects_unapproved_commands_and_bad_refs():
     with pytest.raises(PermissionError):
         dv._run(["rm", "-rf", "/"])
     assert dv.compare_versions("--bad", "main")["status"] == "invalid"
+
+
+def test_compare_experiments_needs_two_names():
+    assert ml.compare_experiments(["only-one"])["status"] == "invalid"

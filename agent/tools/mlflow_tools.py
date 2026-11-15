@@ -172,3 +172,25 @@ def recommend_candidate(experiment_name: str, metric: str = "f1", last_n: int = 
         ],
         "caveats": caveats,
     }
+
+@tool
+def compare_experiments(experiment_names: list[str], metric: str = "f1") -> dict:
+    """Compare experiments by their best finished run on a metric."""
+    if len(experiment_names) < 2:
+        raise ValueError("Provide at least two experiment names")
+    client = _client()
+    out = []
+    for name in experiment_names:
+        runs = client.search_runs(
+            [_experiment_id(client, name)],
+            filter_string="attributes.status = 'FINISHED'",
+            order_by=[f"metrics.{metric} DESC"],
+            max_results=50,
+        )
+        runs = [r for r in runs if metric in r.data.metrics]
+        out.append({
+            "experiment": name,
+            "finished_runs": len(runs),
+            "best": _summary(runs[0]) if runs else None,
+        })
+    return {"metric": metric, "experiments": out}
