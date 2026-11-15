@@ -2,7 +2,6 @@
 .git
 mlartifacts
 airflow
-data
 mlflow.db
 __pycache__/
 *.pyc
