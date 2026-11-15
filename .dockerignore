@@ -1,0 +1,10 @@
+.venv
+.git
+mlartifacts
+airflow
+data
+mlflow.db
+evidence
+screenshots
+__pycache__
+.env
