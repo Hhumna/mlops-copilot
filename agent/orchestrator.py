@@ -220,7 +220,10 @@ class Agent:
 
     def run(self, message: str, confirm_actions: bool = False) -> dict:
         rid = uuid.uuid4().hex[:12]
-        messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": message}]
+        system = SYSTEM
+        if confirm_actions:
+            system += "\nThe user has explicitly confirmed state-changing actions for this request. If they asked for one, call the tool now instead of asking again."
+        messages = [{"role": "system", "content": system}, {"role": "user", "content": message}]
         used: list[dict] = []
         nudged = False
         _log(event="request", request_id=rid)
